@@ -14,16 +14,24 @@ from sqlalchemy import create_engine
 
 app = Flask(__name__)
 
-def tokenize(text):
-    tokens = word_tokenize(text)
-    lemmatizer = WordNetLemmatizer()
+# def tokenize(text):
+#     """
+#     params:
+#     - text: a string to tokenize
 
-    clean_tokens = []
-    for tok in tokens:
-        clean_tok = lemmatizer.lemmatize(tok).lower().strip()
-        clean_tokens.append(clean_tok)
+#     returns:
+#     - clean_tokens: a list of tokens generated from the words within the parameter text, 
+#                     all in lower case & lemmatized
+#     """
+#     tokens = word_tokenize(text)
+#     lemmatizer = WordNetLemmatizer()
 
-    return clean_tokens
+#     clean_tokens = []
+#     for tok in tokens:
+#         clean_tok = lemmatizer.lemmatize(tok).lower().strip()
+#         clean_tokens.append(clean_tok)
+
+#     return clean_tokens
 
 # load data
 engine = create_engine('sqlite:///../../DisasterResponse.db')

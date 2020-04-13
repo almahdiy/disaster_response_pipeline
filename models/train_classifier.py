@@ -12,7 +12,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import classification_report
 from sklearn.model_selection import GridSearchCV
-from joblib import dump, load
+#from joblib import dump, load
 import pickle
 
 import nltk
@@ -22,6 +22,16 @@ nltk.download(['punkt', 'wordnet'])
 
 
 def load_data(database_filepath):
+    """
+    params:
+    - database_filepath: path to the database file where the data is stored.
+
+    returns:
+    - X: the input variable, contains the text
+    - Y: the target variable, contains all the category columns
+    - category_names: list of all the categories a message could have
+    """
+
     engine = create_engine('sqlite:///' + database_filepath)
     df = pd.read_sql_table("DisasterResponse", con=engine)
 
@@ -50,6 +60,15 @@ def load_data(database_filepath):
 
 
 def tokenize(text):
+    """
+    params:
+    - text: a string to tokenize
+
+    returns:
+    - clean_tokens: a list of tokens generated from the words within the parameter text, 
+                    all in lower case & lemmatized
+    """
+
     tokens = word_tokenize(text)
     lemmatizer = WordNetLemmatizer()
     for i in range(len(tokens)):
@@ -59,6 +78,12 @@ def tokenize(text):
 
 
 def build_model():
+    """
+    Builds the machine learning pipeline.
+
+    returns:
+    - cv: a GridSearchCV object
+    """
     pipeline = Pipeline([
         ("vectorize", CountVectorizer(tokenizer=tokenize)),
         ('tfidf', TfidfTransformer()), 
@@ -87,6 +112,16 @@ def build_model():
 
   
 def evaluate_model(model, X_test, Y_test, category_names):
+    """
+    Prints the classification report, which includes multiple model evaluation metrics
+
+    params:
+    - model: the machine learning model to evaluate
+    - X_test: the input features
+    - Y_test: the known correct values of Y
+    - category_names: names of all the categories
+    """
+
     Y_pred = model.predict(X_test)
 
     print(classification_report(Y_test, Y_pred, target_names=category_names))
@@ -94,7 +129,13 @@ def evaluate_model(model, X_test, Y_test, category_names):
 
 
 def save_model(model, model_filepath):
-    dump(model, model_filepath)
+    """
+    params:
+    - model: the model we want to save.
+    - model_filepath: the path & file name where we want to save the model.
+
+    """
+    pickle.dump(model, open(model_filepath, 'wb'))
 
 
 def main():
