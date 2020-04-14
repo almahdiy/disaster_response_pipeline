@@ -28,3 +28,7 @@ This project is an analysis for messages that were sent during disasters. The go
     `python run.py`
 
 3. Go to http://0.0.0.0:3001/
+
+
+### Attribution:
+The data set used in this project was provided by Figure Eight.
