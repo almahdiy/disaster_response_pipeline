@@ -1,5 +1,21 @@
 # Disaster Response Pipeline Project
 
+### Summary:
+This project is an analysis for messages that were sent during disasters. The goal is to create an ETL and a machine learning pipelines to classify the messages into pre-defined categories, to help emergency workers respond to them effectivly. 
+
+### Files:
+- app
+    - templates
+        - go.html
+        - master.html
+    - run.py
+- data
+    - disaster_categories.csv
+    - disaster_messages.csv
+    - process_data.py
+- models
+    - train_classifier.py
+
 ### Instructions:
 1. Run the following commands in the project's root directory to set up your database and model.
 
