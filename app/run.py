@@ -14,31 +14,31 @@ from sqlalchemy import create_engine
 
 app = Flask(__name__)
 
-# def tokenize(text):
-#     """
-#     params:
-#     - text: a string to tokenize
+def tokenize(text):
+    """
+    params:
+    - text: a string to tokenize
 
-#     returns:
-#     - clean_tokens: a list of tokens generated from the words within the parameter text, 
-#                     all in lower case & lemmatized
-#     """
-#     tokens = word_tokenize(text)
-#     lemmatizer = WordNetLemmatizer()
+    returns:
+    - clean_tokens: a list of tokens generated from the words within the parameter text, 
+                    all in lower case & lemmatized
+    """
+    tokens = word_tokenize(text)
+    lemmatizer = WordNetLemmatizer()
 
-#     clean_tokens = []
-#     for tok in tokens:
-#         clean_tok = lemmatizer.lemmatize(tok).lower().strip()
-#         clean_tokens.append(clean_tok)
+    clean_tokens = []
+    for tok in tokens:
+        clean_tok = lemmatizer.lemmatize(tok).lower().strip()
+        clean_tokens.append(clean_tok)
 
-#     return clean_tokens
+    return clean_tokens
 
 # load data
-engine = create_engine('sqlite:///../../DisasterResponse.db')
+engine = create_engine('sqlite:///../data/DisasterResponse.db')
 df = pd.read_sql_table('DisasterResponse', engine)
 
 # load model
-model = joblib.load("../models/classifier.joblib")
+model = joblib.load("../models/classifier.pkl")
 
 
 # index webpage displays cool visuals and receives user input text for model
@@ -50,6 +50,26 @@ def index():
     # TODO: Below is an example - modify to extract data for your own visuals
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
+    
+    
+    print("genre_counts: {}\ngenre_names: {}".format(genre_counts, genre_names))
+    
+    #count the number of 1's in every column
+    dic = {}
+    category_names = list(df.columns)[5:]
+    for col in category_names:
+        dic[col] = df[col].sum()
+        
+    category_counts = pd.Series(dic)
+    
+    
+    #How many messages are written in English Vs. Other langauges
+    english_count = df['original'].count()
+    non_english_count = df.shape[0] - english_count
+    
+    language_counts = pd.Series({"English": english_count, "Non-English": non_english_count})
+    language_names = list(language_counts.index)
+    
     
     # create visuals
     # TODO: Below is an example - modify to create your own visuals
@@ -71,7 +91,47 @@ def index():
                     'title': "Genre"
                 }
             }
+        },
+        
+        {
+            'data': [
+                Bar(
+                    x=category_names,
+                    y=category_counts
+                )
+            ],
+
+            'layout': {
+                'title': 'Distribution of Category Instaces',
+                'yaxis': {
+                    'title': "Count"
+                },
+                'xaxis': {
+                    'title': "Language"
+                }
+            }
+        },
+        
+        {
+            'data': [
+                Bar(
+                    x=language_names,
+                    y=language_counts
+                )
+            ],
+
+            'layout': {
+                'title': 'Distribution of Message Languages',
+                'yaxis': {
+                    'title': "Count"
+                },
+                'xaxis': {
+                    'title': "Category"
+                }
+            }
         }
+        
+        
     ]
     
     # encode plotly graphs in JSON
